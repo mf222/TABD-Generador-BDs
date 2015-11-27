@@ -90,6 +90,7 @@ public class main {
         document.append("vecinos", pickFriends(idv)); 
         
         idv++;
+        
         int n_mascotas = (int) Math.round(Math.random());
         for(int j=0; j<n_mascotas;j++){
     	    String[] mascota = pickPet();
@@ -101,6 +102,16 @@ public class main {
         
         collection.insert(document);
  
+    }
+    
+    
+    DBCursor cursor2 = collection.find();
+    try {
+       while(cursor2.hasNext()) {
+           System.out.println(cursor2.next());
+       }
+    } finally {
+       cursor2.close();
     }
      
     //Ahora se comienza a pasar la BDDoc a BDGraph
