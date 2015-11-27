@@ -28,9 +28,9 @@ import com.mongodb.client.MongoDatabase;
 
 public class main {
     
-	public static String nombres[] = {"Feña","Seba","Adrian","Jaime",
+	public static String nombres[] = {"Seba","Adrian","Jaime",
 			"Vicho","Tony Stark","Hulk","Solid Snake",
-			"Soprole","Lulu","Rodrigo","Belén",
+			"Soprole","Lulu","Rodrigo","Belencita",
 			"Profe Juan"};
     
 	public static String mascotas[][] ={
