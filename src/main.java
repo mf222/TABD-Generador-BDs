@@ -54,7 +54,7 @@ public class main {
     static GraphDatabaseService graphDb;
     static Relationship relationship;
     
-    static int tamaño_documento = 10;
+    static int tamaÃ±o_documento = 20;
     
      
   public static void main(String[] args) throws UnknownHostException {
@@ -66,12 +66,16 @@ public class main {
     	
     
 
-	int idm = tamaño_documento;
+	int idm = tamaÃ±o_documento;
     
     //Datos de la conexion	
     MongoClient mongo = new MongoClient("localhost", 27017);
     DB db = mongo.getDB("DBVecinos");
     DBCollection collection = db.getCollection("person");   
+    DBCollection collection2 = db.getCollection("mascotas");  
+    
+    collection.drop();
+    collection2.drop();
     
     //Creamos la db de grafos
     graphDb = new GraphDatabaseFactory().newEmbeddedDatabase("grafo");
@@ -81,7 +85,7 @@ public class main {
     
     //Se crea la coleccion. documento es la query que ingresa a cada persona    
     BasicDBObject document ;
-    for(int i = 0 ; i < tamaño_documento ; i++){
+    for(int i = 0 ; i < tamaÃ±o_documento ; i++){
         
     	document = new BasicDBObject();
     	document.append("id", idv);
@@ -97,13 +101,15 @@ public class main {
         	document.append("mascotas", new BasicDBObject("id",idm).append("nombre",mascota[0])
                                     .append("tipo", mascota[1])
                                     .append("edad", mascota[2])); 
+        	collection2.insert(new BasicDBObject("id",idm).append("nombre",mascota[0])
+                    .append("tipo", mascota[1])
+                    .append("edad", mascota[2]));
         	idm++;
         }
         
         collection.insert(document);
  
     }
-    
     
     DBCursor cursor2 = collection.find();
     try {
@@ -113,6 +119,7 @@ public class main {
     } finally {
        cursor2.close();
     }
+
      
     //Ahora se comienza a pasar la BDDoc a BDGraph
     BasicDBObject exclude_include = new BasicDBObject();
@@ -130,7 +137,7 @@ public class main {
     	try ( Transaction tx = graphDb.beginTx() )
     	{
     		//Se crean los nodos, cada uno mapea al de cada vecino
-    		for(int m =0; m<tamaño_documento; m++){
+    		for(int m =0; m<tamaÃ±o_documento; m++){
      		   firstNode = graphDb.createNode();
      		   firstNode.setProperty("id", m);
      		   nodos.add(firstNode);
@@ -184,28 +191,41 @@ public class main {
            
        }
        
-       tx.success();
+       tx.success();      
+       
     }
+    	
     } finally {
        cursor.close();
     }
     
+    collection.insert(collection2.find().toArray());
     
-  
+    DBCursor cursor3 = collection.find();
+    try {
+       while(cursor3.hasNext()) {
+           System.out.println(cursor3.next());
+       }
+    } finally {
+       cursor3.close();
+    }
+    
     } catch (MongoException e) {
     e.printStackTrace();
     }
+    
+    
   
   }
   //----------------------------------------------------
   //These methods are just jused to build random data
   private static Object[] pickFriends(int id){
 	  Random r = new Random();
-	  int numberOfFriends = r.nextInt(tamaño_documento -1);
+	  int numberOfFriends = r.nextInt(tamaÃ±o_documento -1);
       List<Integer> friends = new ArrayList<Integer>();
       
       while(friends.size() < numberOfFriends){
-    		int random = r.nextInt(tamaño_documento -1);
+    		int random = r.nextInt(tamaÃ±o_documento -1);
     	  	if(random!=id && !friends.contains(random)){
     	  		friends.add(random);
     	  	}
